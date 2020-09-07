@@ -1,2 +1,3 @@
 # first-discord-bot
-My first discordbot
+My first discord bot
+sorry the github and code sucks this is my first time
