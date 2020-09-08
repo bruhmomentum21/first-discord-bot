@@ -92,5 +92,5 @@ async def kick_error(ctx, error: MissingPermissions):
         await message.channel.send(' :pensive: :pensive: :rage: ')
 
 
-client.run('NzM1ODMyMDE2OTA5NzYyNjUw.Xxl-9w.XmwtL8kGszQJqfG34d0k2YVsCGY')
+client.run('insert token here ')
 
