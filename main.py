@@ -7,6 +7,8 @@ import random
 import requests
 import uuid
 from pathlib import Path
+import sqlite3
+import datetime
 
 p = Path('.')
 call = ['based.', 'cringe! you\'re going to lose subscriber!']
@@ -35,7 +37,7 @@ async def on_message_delete(message):
 async def reaction(ctx: discord.message):
     guild = ctx.guild
     message = ctx.message
-    await ctx.channel.send(f'members in this server so far: {len(guild.members)}')
+    await ctx.channel.send(f'members in this server so far: {len(guild.members)} users')
     for I in range(len(guild.members)):
         await message.author.send(guild.members[I])
 
@@ -47,19 +49,29 @@ async def based(ctx):
     await edit.edit(content=call[random.randint(0, 1)])
 
 
+async def mysql(image_name_aka_uuuid,the_id_of_the_uploader,date):
+    TheDatabaseItself = sqlite3.connect('discordbot_database.db')
+    c = TheDatabaseItself.cursor()
+    c.execute("INSERT INTO discord_database VALUES (?,?,?)", (image_name_aka_uuuid, the_id_of_the_uploader, date))
+    TheDatabaseItself.commit()
+    TheDatabaseItself.close()
+
 # !attach [image] to upload images to pc
 @client.command()
 async def attach(ctx):
     f = ctx.message.attachments[0]
-
+    date = datetime.datetime.now()
+    hoorah = f'{uuid.uuid4()}.jpg'
     if f.url.endswith(".png") or f.url.endswith(".jpg"):
-        with open(f'{uuid.uuid4()}.jpg', 'wb') as handle:
+        await mysql(str(hoorah), int(ctx.message.author.id), date.strftime("%m/%d/%Y, %H:%M:%S"))
+        with open(f'{hoorah}', 'wb') as handle:
             response = requests.get(f.url, stream=True)
             for block in response.iter_content(1024):
                 if not response.ok:
                     print(response)
                 else:
                     handle.write(block)
+
         await ctx.message.channel.send('Image saved!')
     else:
         await ctx.message.channel.send('format not supported!')
@@ -81,7 +93,7 @@ async def kick(ctx, member: discord.Member, *, reason=None):
     amount = 2
     user = ctx.author
     await member.kick(reason=reason)
-    await ctx.message.channel.send(f'{member} has been kicked by {user}')
+    await ctx.message.channel.send(f'{member.mention} has been kicked by {user.mention}')
 
 
 @kick.error
@@ -92,5 +104,4 @@ async def kick_error(ctx, error: MissingPermissions):
         await message.channel.send(' :pensive: :pensive: :rage: ')
 
 
-client.run('insert token here ')
-
+client.run('NzM1ODMyMDE2OTA5NzYyNjUw.Xxl-9w.khqhKrt_fwKJbii3ebZ3lp1y3jQ')
